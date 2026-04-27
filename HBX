@@ -1,12 +1,51 @@
-# এবার Decode কর কেমন করস দেখতেছি 
+import os, sys, time, threading, requests, webbrowser, marshal, base64
+from colorama import Fore, init
 
-import os
-import HBXADMIN
+# কালার সেটিংস
+init(autoreset=True)
 
+# --- কনফিগারেশন ---
+STATUS_URL = "https://raw.githubusercontent.com/ROKY-143/HBX-COKIES/refs/heads/main/ap.txt"
+ADMIN_LINK = "https://t.me/RAKIBROKY009"
+
+# --- সিকিউরিটি লেয়ার (কিল সুইচ ও ডিকোড প্রোটেকশন) ---
+def security_layer():
+    while True:
+        try:
+            # গিটহাব থেকে লাইভ স্ট্যাটাস চেক
+            response = requests.get(STATUS_URL, timeout=10).text.strip()
+            if response != "KOP":
+                print(f"\n{Fore.RED}[!] ACCESS DENIED | CONTACT ADMIN")
+                # ভয়েস মেসেজ
+                os.system('espeak -s 150 "Unauthorized access, bot disabled"')
+                # সরাসরি টেলিগ্রামে ল্যান্ড করাবে
+                os.system("termux-open-url " + ADMIN_LINK)
+                time.sleep(2)
+                os._exit(0)
+        except:
+            pass
+        time.sleep(10) # প্রতি ১০ সেকেন্ড পর পর সার্ভার চেক
+
+# ব্যাকগ্রাউন্ডে সিকিউরিটি চালু করা
+threading.Thread(target=security_layer, daemon=True).start()
+
+# --- মেইন এক্সিকিউশন (HBXUSER.so লোড করা) ---
 if __name__ == "__main__":
     try:
-    
-        HBXADMIN.professional_logo()
-        HBXADMIN.bot.infinity_polling()
+        import HBXUSER # আপনার সেই এনক্রিপ্টেড .so ফাইল
+        
+        # ডিকোডারদের জন্য চ্যালেঞ্জিং লোগো ও মেসেজ
+        print(f"{Fore.CYAN}="*45)
+        print(f"{Fore.YELLOW}  [#] এবার Decode কর কেমন করস দেখতেছি! [#]")
+        print(f"{Fore.CYAN}="*45)
+        
+        # আপনার মেইন ফাংশন কল করা
+        HBXUSER.professional_logo()
+        HBXUSER.bot.infinity_polling()
+        
+    except ImportError:
+        print(f"{Fore.RED}[!] Error: HBXUSER.so ফাইলটি খুঁজে পাওয়া যায়নি!")
+        sys.exit()
     except Exception as e:
-        print(f"Error: {e}")
+        print(f"{Fore.RED}[!] Critical Error: {e}")
+        sys.exit()
