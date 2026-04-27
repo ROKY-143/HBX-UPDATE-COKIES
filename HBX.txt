@@ -1,0 +1,12 @@
+# এবার Decode কর কেমন করস দেখতেছি 
+
+import os
+import HBXADMIN
+
+if __name__ == "__main__":
+    try:
+    
+        HBXADMIN.professional_logo()
+        HBXADMIN.bot.infinity_polling()
+    except Exception as e:
+        print(f"Error: {e}")
