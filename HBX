@@ -1,10 +1,39 @@
 import os
-import HBXUSER  #
+import platform
+import sys
+
+# আর্কিটেকচার চেক করার ফাংশন
+def get_arch():
+    # প্রসেসর টাইপ চেক করা
+    machine = platform.machine().lower()
+    if "aarch64" in machine or "arm64" in machine:
+        return "64"
+    else:
+        # armv7l, i686 বা অন্য ৩২-বিট আর্কিটেকচার হলে এখানে আসবে
+        return "32"
+
+arch_type = get_arch()
+
+if arch_type == "64":
+    try:
+        import HBXUSER
+    except ImportError:
+        print("❌ Error: HBXUSER.so ফাইলটি খুঁজে পাওয়া যায়নি!")
+        sys.exit()
+else:
+    # ৩২-বিট ইউজারদের জন্য মেসেজ
+    print("="*40)
+    print("❌ দুঃখিত! আপনার ফোনটি ৩২-বিটের।")
+    print("🛠️ এই স্ক্রিপ্টটি বর্তমানে শুধুমাত্র ৬৪-বিটে কাজ করে।")
+    print("🔜 ৩২-বিট সাপোর্ট খুব শীঘ্রই আপডেট করা হবে।")
+    print("="*40)
+    sys.exit()
 
 if __name__ == "__main__":
     try:
-        
+        # ৬৪-বিট হলে এই অংশটুকু চলবে
         HBXUSER.professional_logo()
         HBXUSER.bot.infinity_polling()
     except Exception as e:
         print(f"Error: {e}")
+nrrot
