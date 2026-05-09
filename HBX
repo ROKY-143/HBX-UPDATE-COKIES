@@ -20,10 +20,10 @@ def main():
 
     if arch_type == "64":
         try:
-            # এখানে আপনার নতুন সাইথন করা HBXUSER.so ফাইলটি ইমপোর্ট হবে
-            import HBXUSER
+            # এখানে আপনার নতুন সাইথন করা HBXTMUSER.so ফাইলটি ইমপোর্ট হবে
+            import HBXTMUSER
         except ImportError as e:
-            print(f"❌ Error: HBXUSER.so ফাইলটি খুঁজে পাওয়া যায়নি অথবা আর্কিটেকচার মিলছে না! {e}")
+            print(f"❌ Error: HBXTMUSER.so ফাইলটি খুঁজে পাওয়া যায়নি অথবা আর্কিটেকচার মিলছে না! {e}")
             sys.exit()
     else:
         # ৩২-বিট ইউজারদের জন্য মেসেজ
@@ -35,10 +35,10 @@ def main():
 
     try:
         # ৬৪-বিট হলে এই অংশটুকু চলবে
-        # HBXUSER এর ভেতরে থাকা লোগো এবং বট স্টার্ট ফাংশন
-        HBXUSER.professional_logo()
+        # HBXTMUSER এর ভেতরে থাকা লোগো এবং বট স্টার্ট ফাংশন
+        HBXTMUSER.professional_logo()
         print("\n\033[1;32m[+] HBX USER বট রান হচ্ছে...\033[0m")
-        HBXUSER.bot.infinity_polling()
+        HBXTMUSER.bot.infinity_polling()
     except Exception as e:
         print(f"Error: {e}")
 
