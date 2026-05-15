@@ -1,68 +1,77 @@
 import os
-import platform
 import sys
 import time
+import platform
 import importlib.util
 
 # কালার কোড
-RED   = "\033[1;31m"
-GREEN = "\033[1;32m"
-CYAN  = "\033[1;36m"
-WHITE = "\033[1;37m"
-RESET = "\033[0m"
+R = "\033[1;31m" # লাল
+G = "\033[1;32m" # সবুজ
+Y = "\033[1;33m" # হলুদ
+C = "\033[1;36m" # সায়ান
+W = "\033[1;37m" # সাদা
+B = "\033[1;34m" # নীল
 
-def dynamic_import(module_name):
-    """সরাসরি .so ফাইল পাথ থেকে ইমপোর্ট করার পদ্ধতি"""
-    file_path = f"{module_name}.so"
-    if not os.path.exists(file_path):
-        # যদি রিনেম করা ফাইল না থাকে, তবে অরিজিনাল Cython ফাইল খোঁজা
-        files = [f for f in os.listdir('.') if f.startswith(module_name) and f.endswith('.so')]
-        if files:
-            file_path = files[0]
-        else:
-            return None
+def clear():
+    os.system('clear' if os.name == 'posix' else 'cls')
 
-    spec = importlib.util.spec_from_file_location(module_name, file_path)
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    return module
+def get_arch():
+    machine = platform.machine().lower()
+    if "aarch64" in machine or "arm64" in machine:
+        return "64"
+    return "32"
 
 def main():
-    os.system('clear')
+    clear()
+    arch = get_arch()
     
-    # আর্কিটেকচার চেক
-    machine = platform.machine().lower()
-    if not ("aarch64" in machine or "arm64" in machine):
-        print(f"{RED}🛑 এই স্ক্রিপ্টটি শুধুমাত্র ৬৪-বিটে কাজ করে।{RESET}")
+    if arch != "64":
+        print(f"\n{R} [!] সরি মামা, এই টুলসটি ৩২-বিট ফোনে চলবে না।{W}")
+        sys.exit()
+
+    # আপনার সাইথন ফাইলের নাম
+    module_name = "HBXCOOKIESUSER"
+    so_file = f"{module_name}.so"
+
+    if not os.path.exists(so_file):
+        print(f"\n{R} [!] ত্রুটি: {so_file} ফাইলটি খুঁজে পাওয়া যায়নি!{W}")
+        print(f"{Y} [?] সমাধান: নিশ্চিত হোন ফাইলটি এই ফোল্ডারেই আছে।{W}")
         sys.exit()
 
     try:
-        print(f"{CYAN}[!] HBX COOKIES ইঞ্জিন লোড হচ্ছে...{RESET}")
+        print(f"{C} [!] ইঞ্জিন লোড হচ্ছে...{W}")
+        time.sleep(1)
         
-        # ডায়নামিক ইমপোর্ট ট্রাই করা
-        HBXCOOKIESUSER = dynamic_import("HBXCOOKIESUSER")
-        
-        if HBXCOOKIESUSER:
-            HBXCOOKIESUSER.professional_logo()
-            print(f"  │ {GREEN}[+] {WHITE}সিস্টেম চেক    : {GREEN}সফল")
-            print(f"  │ {GREEN}[+] {WHITE}ফাইল লোড       : {GREEN}সফল")
-            print(f"  └────────────────────────────────────────────────────────")
-            
-            while True:
-                try:
-                    HBXCOOKIESUSER.bot.infinity_polling(timeout=10, long_polling_timeout=5)
-                except Exception:
-                    time.sleep(5)
-        else:
-            raise ImportError
+        # ডায়নামিক ইমপোর্ট লজিক
+        spec = importlib.util.spec_from_file_location(module_name, os.path.abspath(so_file))
+        hbx = importlib.util.module_from_spec(spec)
+        sys.modules[module_name] = hbx
+        spec.loader.exec_module(hbx)
 
-    except ImportError:
-        print(f"\n{RED}❌ ত্রুটি: HBXCOOKIESUSER.so ফাইলটি ইমপোর্ট করা যাচ্ছে না!{RESET}")
-        print(f"{CYAN}💡 সমাধান: আপনার পাইথন ভার্সন আপডেট হয়েছে। ফাইলটি আবার Cythonize করুন।{RESET}")
-        sys.exit()
+        # লোগো এবং বট স্টার্ট (আপনার অরিজিনাল কোড অনুযায়ী)
+        hbx.professional_logo()
+        
+        print(f"  │ {G}[+] {W}সিস্টেম স্ট্যাটাস : {G}একটিভ{W}")
+        print(f"  │ {G}[+] {W}আর্কিটেকচার      : {G}৬৪-বিট{W}")
+        print(f"  └────────────────────────────────────────────────────────")
+        print(f"\n{C} [🚀] কোপানো শুরু হচ্ছে...{W}\n")
+
+        # ইনফিনিটি পোলিং (যাতে এরর আসলেও বট বন্ধ না হয়)
+        while True:
+            try:
+                hbx.bot.infinity_polling(timeout=10, long_polling_timeout=5)
+            except Exception as e:
+                # এরর আসলে ৫ সেকেন্ড পর আবার ট্রাই করবে
+                time.sleep(5)
+
     except Exception as e:
-        print(f"\n{RED}❌ সিস্টেম এরর: {e}{RESET}")
+        print(f"\n{R} [!] মারাত্মক এরর: {e}{W}")
+        print(f"{Y} [!] টিপস: আপনি কি পাইথন ভার্সন চেঞ্জ করেছেন? তাহলে আবার Cythonize করুন।{W}")
         sys.exit()
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except KeyboardInterrupt:
+        print(f"\n\n{R} [!] ইউজার দ্বারা বন্ধ করা হয়েছে।{W}")
+        sys.exit()
