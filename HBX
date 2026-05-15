@@ -3,75 +3,55 @@ import platform
 import sys
 import time
 
-# কালার কোড (প্রিমিয়াম লুকের জন্য)
+# কালার কোড
 RED   = "\033[1;31m"
 GREEN = "\033[1;32m"
 CYAN  = "\033[1;36m"
 WHITE = "\033[1;37m"
-YELLOW = "\033[1;33m"
 RESET = "\033[0m"
 
 def get_arch():
-    """ডিভাইস আর্কিটেকচার চেক করা"""
     machine = platform.machine().lower()
     if "aarch64" in machine or "arm64" in machine:
         return "64"
     return "32"
 
 def main():
-    # স্ক্রিন ক্লিয়ার করা
-    os.system('clear' if os.name == 'posix' else 'cls')
-    
-    arch_type = get_arch()
+    os.system('clear')
+    arch = get_arch()
 
-    if arch_type == "64":
+    if arch == "64":
         try:
-            # HBXCOOKIESUSER.so ইমপোর্ট করা হচ্ছে
+            # গিটহাবের ফাইলের নাম অনুযায়ী ইমপোর্ট (HBXCOOKIESUSER)
             import HBXCOOKIESUSER
             
-            # আপনার মেইন স্ক্রিপ্টের লোগো ফাংশন কল
+            # লোগো কল করা
             HBXCOOKIESUSER.professional_logo()
             
             print(f"  │ {GREEN}[+] {WHITE}সিস্টেম চেক    : {GREEN}পাসড (64-BIT)")
-            print(f"  │ {GREEN}[+] {WHITE}বট স্ট্যাটাস    : {GREEN}লোডিং হচ্ছে...")
+            print(f"  │ {GREEN}[+] {WHITE}বট স্ট্যাটাস    : {GREEN}রানিং...")
             print(f"  └────────────────────────────────────────────────────────")
-            time.sleep(1.5)
             
-            print(f"\n{GREEN}  [✅] HBX COOKIES BOT IS NOW ACTIVE!{RESET}")
-            print(f"{CYAN}  [!] পোলিং শুরু হচ্ছে...{RESET}\n")
-
-            # আপনার দেওয়া সেই ইনফিনিটি পোলিং লজিক
+            # ইনফিনিটি পোলিং লজিক
             while True:
                 try:
-                    # HBXCOOKIESUSER এর ভেতরে থাকা 'bot' অবজেক্ট দিয়ে পোলিং শুরু
                     HBXCOOKIESUSER.bot.infinity_polling(timeout=10, long_polling_timeout=5)
                 except Exception as e:
-                    # এরর আসলে ৫ সেকেন্ড পর আবার ট্রাই করবে (যাতে ক্রাশ না করে)
-                    print(f"{RED}[!] পোলিং এরর: {e}{RESET}")
                     time.sleep(5)
                     
-        except ImportError as e:
+        except ImportError:
             print(f"\n{RED}  ❌ ত্রুটি: HBXCOOKIESUSER.so ফাইলটি পাওয়া যায়নি!")
-            print(f"  {YELLOW}  নিশ্চিত হোন ফাইলটি সঠিক নামে বর্তমান ফোল্ডারে আছে।{RESET}")
-            sys.exit()
-        except AttributeError:
-            print(f"\n{RED}  ❌ ত্রুটি: HBXCOOKIESUSER ফাইলের ভেতর bot অবজেক্ট পাওয়া যায়নি।")
+            print(f"  {CYAN}  নিশ্চিত হোন ফাইলটি সঠিক নামে বর্তমান ফোল্ডারে আছে।{RESET}")
+            # বর্তমানে কি কি ফাইল আছে তা দেখার জন্য (ডেবাগিং)
+            print(f"\n{WHITE}  আপনার ফোল্ডারে থাকা ফাইলসমূহ:{RESET}")
+            os.system('ls')
             sys.exit()
         except Exception as e:
             print(f"\n{RED}  ❌ এরর: {e}{RESET}")
             sys.exit()
-            
     else:
-        # ৩২-বিট ইউজারদের জন্য প্রফেশনাল ডিজাইন
-        print(f"{RED}┌────────────────────────────────────────────────────────┐")
-        print(f"│ {WHITE}   🛑 সরি মামা! আপনার ডিভাইসটি ৩২-বিটের (32-BIT)   {RED}│")
-        print(f"│ {WHITE}   🛠️  এই স্ক্রিপ্টটি শুধুমাত্র ৬৪-বিটে কাজ করে।   {RED}│")
-        print(f"└────────────────────────────────────────────────────────┘{RESET}")
+        print(f"\n{RED}  🛑 সরি মামা! এই টুলসটি শুধুমাত্র ৬৪-বিটে কাজ করে।{RESET}")
         sys.exit()
 
 if __name__ == "__main__":
-    try:
-        main()
-    except KeyboardInterrupt:
-        print(f"\n\n{RED}  [!] ইউজার দ্বারা স্ক্রিপ্টটি বন্ধ করা হয়েছে।{RESET}")
-        sys.exit()
+    main()
