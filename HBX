@@ -2,6 +2,7 @@ import os
 import platform
 import sys
 import time
+import importlib.util
 
 # কালার কোড
 RED   = "\033[1;31m"
@@ -10,47 +11,57 @@ CYAN  = "\033[1;36m"
 WHITE = "\033[1;37m"
 RESET = "\033[0m"
 
-def get_arch():
-    machine = platform.machine().lower()
-    if "aarch64" in machine or "arm64" in machine:
-        return "64"
-    return "32"
+def dynamic_import(module_name):
+    """সরাসরি .so ফাইল পাথ থেকে ইমপোর্ট করার পদ্ধতি"""
+    file_path = f"{module_name}.so"
+    if not os.path.exists(file_path):
+        # যদি রিনেম করা ফাইল না থাকে, তবে অরিজিনাল Cython ফাইল খোঁজা
+        files = [f for f in os.listdir('.') if f.startswith(module_name) and f.endswith('.so')]
+        if files:
+            file_path = files[0]
+        else:
+            return None
+
+    spec = importlib.util.spec_from_file_location(module_name, file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
 
 def main():
     os.system('clear')
-    arch = get_arch()
+    
+    # আর্কিটেকচার চেক
+    machine = platform.machine().lower()
+    if not ("aarch64" in machine or "arm64" in machine):
+        print(f"{RED}🛑 এই স্ক্রিপ্টটি শুধুমাত্র ৬৪-বিটে কাজ করে।{RESET}")
+        sys.exit()
 
-    if arch == "64":
-        try:
-            # গিটহাবের ফাইলের নাম অনুযায়ী ইমপোর্ট (HBXCOOKIESUSER)
-            import HBXCOOKIESUSER
-            
-            # লোগো কল করা
+    try:
+        print(f"{CYAN}[!] HBX COOKIES ইঞ্জিন লোড হচ্ছে...{RESET}")
+        
+        # ডায়নামিক ইমপোর্ট ট্রাই করা
+        HBXCOOKIESUSER = dynamic_import("HBXCOOKIESUSER")
+        
+        if HBXCOOKIESUSER:
             HBXCOOKIESUSER.professional_logo()
-            
-            print(f"  │ {GREEN}[+] {WHITE}সিস্টেম চেক    : {GREEN}পাসড (64-BIT)")
-            print(f"  │ {GREEN}[+] {WHITE}বট স্ট্যাটাস    : {GREEN}রানিং...")
+            print(f"  │ {GREEN}[+] {WHITE}সিস্টেম চেক    : {GREEN}সফল")
+            print(f"  │ {GREEN}[+] {WHITE}ফাইল লোড       : {GREEN}সফল")
             print(f"  └────────────────────────────────────────────────────────")
             
-            # ইনফিনিটি পোলিং লজিক
             while True:
                 try:
                     HBXCOOKIESUSER.bot.infinity_polling(timeout=10, long_polling_timeout=5)
-                except Exception as e:
+                except Exception:
                     time.sleep(5)
-                    
-        except ImportError:
-            print(f"\n{RED}  ❌ ত্রুটি: HBXCOOKIESUSER.so ফাইলটি পাওয়া যায়নি!")
-            print(f"  {CYAN}  নিশ্চিত হোন ফাইলটি সঠিক নামে বর্তমান ফোল্ডারে আছে।{RESET}")
-            # বর্তমানে কি কি ফাইল আছে তা দেখার জন্য (ডেবাগিং)
-            print(f"\n{WHITE}  আপনার ফোল্ডারে থাকা ফাইলসমূহ:{RESET}")
-            os.system('ls')
-            sys.exit()
-        except Exception as e:
-            print(f"\n{RED}  ❌ এরর: {e}{RESET}")
-            sys.exit()
-    else:
-        print(f"\n{RED}  🛑 সরি মামা! এই টুলসটি শুধুমাত্র ৬৪-বিটে কাজ করে।{RESET}")
+        else:
+            raise ImportError
+
+    except ImportError:
+        print(f"\n{RED}❌ ত্রুটি: HBXCOOKIESUSER.so ফাইলটি ইমপোর্ট করা যাচ্ছে না!{RESET}")
+        print(f"{CYAN}💡 সমাধান: আপনার পাইথন ভার্সন আপডেট হয়েছে। ফাইলটি আবার Cythonize করুন।{RESET}")
+        sys.exit()
+    except Exception as e:
+        print(f"\n{RED}❌ সিস্টেম এরর: {e}{RESET}")
         sys.exit()
 
 if __name__ == "__main__":
