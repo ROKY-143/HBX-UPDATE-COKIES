@@ -31,14 +31,14 @@ def main():
         sys.exit()
 
     try:
-        # COKIESUSER.so ইমপোর্ট করা হচ্ছে
+        # USER.so ইমপোর্ট করা হচ্ছে
         print(f"{C} [!] HBX ইঞ্জিন লোড হচ্ছে...{RESET}")
         time.sleep(1)
         
-        import COKIESUSER
+        import USER
         
         # আপনার স্ক্রিপ্টের লোগো ফাংশন কল
-        COKIESUSER.professional_logo()
+        USER.professional_logo()
         
         print(f"  │ {G}[+] {W}সিস্টেম চেক    : {G}পাসড (৬৪-বিট){RESET}")
         print(f"  │ {G}[+] {W}বট স্ট্যাটাস    : {G}অনলাইন{RESET}")
@@ -49,14 +49,14 @@ def main():
         while True:
             try:
                 # COKIESUSER এর ভেতরের bot অবজেক্ট ব্যবহার করে
-                COKIESUSER.bot.infinity_polling(timeout=10, long_polling_timeout=5)
+                USER.bot.infinity_polling(timeout=10, long_polling_timeout=5)
             except Exception as e:
                 # এরর আসলে ৫ সেকেন্ড ওয়েট করে আবার ট্রাই করবে
                 time.sleep(5)
 
     except ImportError:
-        print(f"\n{R} [!] ত্রুটি: COKIESUSER.so ফাইলটি পাওয়া যায়নি!{RESET}")
-        print(f"{Y} [?] টিপস: ফাইলটি রিনেম করে 'COKIESUSER.so' রাখুন।{RESET}")
+        print(f"\n{R} [!] ত্রুটি: USER.so ফাইলটি পাওয়া যায়নি!{RESET}")
+        print(f"{Y} [?] টিপস: ফাইলটি রিনেম করে 'USER.so' রাখুন।{RESET}")
         sys.exit()
     except AttributeError:
         print(f"\n{R} [!] ত্রুটি: মডিউলের ভেতর 'bot' বা 'professional_logo' পাওয়া যায়নি।{RESET}")
