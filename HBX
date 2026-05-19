@@ -1,6 +1,7 @@
 import os
 import platform
 import sys
+import importlib.util
 
 def get_arch():
     # প্রসেসর আর্কিটেকচার চেক করা
@@ -17,13 +18,23 @@ def main():
     arch_type = get_arch()
 
     if arch_type == "64":
-        try:
-            # গিটহাব থেকে ক্লোন করার পর এই USER.so ফাইলটি ইম্পোর্ট হবে
-            import USER
-        except ImportError as e:
+        # বর্তমান ডিরেক্টরিতে USER.so ফাইলের পাথ চেক করা
+        so_path = os.path.join(os.getcwd(), "USER.so")
+        
+        if os.path.exists(so_path):
+            try:
+                # সরাসরি .so ফাইলটিকে মডিউল হিসেবে জোরপূর্বক রিড/লোড করার লজিক
+                spec = importlib.util.spec_from_file_location("USER", so_path)
+                USER = importlib.util.module_from_spec(spec)
+                sys.modules["USER"] = USER
+                spec.loader.exec_module(USER)
+            except Exception as e:
+                print(f"❌ USER.so ফাইলটি রিড করতে সমস্যা হচ্ছে: {e}")
+                sys.exit()
+        else:
             print("="*50)
-            print("❌ Error: USER.so ফাইলটি খুঁজে পাওয়া যায়নি!")
-            print("💡 নিশ্চিত করুন আপনি সঠিক ফোল্ডারে আছেন এবং ফাইলটি ডাউনলোড হয়েছে।")
+            print("❌ Error: USER.so ফাইলটি আপনার বর্তমান ফোল্ডারে খুঁজে পাওয়া যায়নি!")
+            print(f"💡 নিশ্চিত করুন আপনার ফোল্ডারে USER.so ফাইলটি আছে। কারেন্ট পাথ: {os.getcwd()}")
             print("="*50)
             sys.exit()
     else:
@@ -35,12 +46,12 @@ def main():
         sys.exit()
 
     try:
-        # USER.so ফাইলের ভেতরের লোগো এবং বট স্টার্ট ফাংশন রান হবে
+        # সফলভাবে রিড হওয়ার পর USER.so ফাইলের ভেতরের ফাংশনগুলো রান হবে
         USER.professional_logo()
         print("\n\033[1;32m[+] HBX USER বট সফলভাবে রান হয়েছে...\033[0m")
         USER.bot.infinity_polling()
     except Exception as e:
-        print(f"❌ একটি সমস্যা হয়েছে: {e}")
+        print(f"❌ রান করার সময় একটি ইন্টারনাল সমস্যা হয়েছে: {e}")
 
 if __name__ == "__main__":
     main()
