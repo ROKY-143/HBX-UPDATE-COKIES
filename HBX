@@ -1,57 +1,73 @@
 import os
-import platform
 import sys
-import importlib.util
+import time
+import platform
+
+# কালার কোড
+R = "\033[1;31m" # Red
+G = "\033[1;32m" # Green
+Y = "\033[1;33m" # Yellow
+C = "\033[1;36m" # Cyan
+W = "\033[1;37m" # White
+RESET = "\033[0m"
+
+def clear():
+    os.system('clear' if os.name == 'posix' else 'cls')
 
 def get_arch():
-    # প্রসেসর আর্কিটেকচার চেক করা
     machine = platform.machine().lower()
     if "aarch64" in machine or "arm64" in machine:
         return "64"
-    else:
-        return "32"
+    return "32"
 
 def main():
-    # স্ক্রিন ক্লিয়ার করা
-    os.system('clear')
+    clear()
+    arch = get_arch()
     
-    arch_type = get_arch()
-
-    if arch_type == "64":
-        # বর্তমান ডিরেক্টরিতে USER.so ফাইলের পাথ চেক করা
-        so_path = os.path.join(os.getcwd(), "USER.so")
-        
-        if os.path.exists(so_path):
-            try:
-                # সরাসরি .so ফাইলটিকে মডিউল হিসেবে জোরপূর্বক রিড/লোড করার লজিক
-                spec = importlib.util.spec_from_file_location("USER", so_path)
-                USER = importlib.util.module_from_spec(spec)
-                sys.modules["USER"] = USER
-                spec.loader.exec_module(USER)
-            except Exception as e:
-                print(f"❌ USER.so ফাইলটি রিড করতে সমস্যা হচ্ছে: {e}")
-                sys.exit()
-        else:
-            print("="*50)
-            print("❌ Error: USER.so ফাইলটি আপনার বর্তমান ফোল্ডারে খুঁজে পাওয়া যায়নি!")
-            print(f"💡 নিশ্চিত করুন আপনার ফোল্ডারে USER.so ফাইলটি আছে। কারেন্ট পাথ: {os.getcwd()}")
-            print("="*50)
-            sys.exit()
-    else:
-        # ৩২-বিট ইউজারদের জন্য ব্লক মেসেজ
-        print("="*45)
-        print("❌ দুঃখিত! আপনার ফোনটি ৩২-বিটের (32-bit)।")
-        print("🛠️ এই স্ক্রিপ্টটি বর্তমানে শুধুমাত্র ৬৪-বিটে (aarch64) কাজ করে।")
-        print("="*45)
+    # ৩২-বিট ইউজারদের জন্য ব্লক
+    if arch != "64":
+        print(f"\n{R} [!] সরি মামা, আপনার ফোনটি ৩২-বিটের। এই টুলসটি চলবে না।{RESET}")
         sys.exit()
 
     try:
-        # সফলভাবে রিড হওয়ার পর USER.so ফাইলের ভেতরের ফাংশনগুলো রান হবে
-        USER.professional_logo()
-        print("\n\033[1;32m[+] HBX USER বট সফলভাবে রান হয়েছে...\033[0m")
-        USER.bot.infinity_polling()
+        # HBXUSER.so ইমপোর্ট করা হচ্ছে
+        print(f"{C} [!] HBX আল্ট্রা ইঞ্জিন লোড হচ্ছে...{RESET}")
+        time.sleep(1)
+        
+        # সাইথন বিল্ড করা মডিউল ইমপোর্ট
+        import HBXUSER
+        
+        # আপনার স্ক্রিপ্টের মেইন লোগো ফাংশন কল
+        HBXUSER.professional_logo()
+        
+        print(f"  │ {G}[+] {W}সিস্টেম চেক    : {G}পাসড (৬৪-বিট){RESET}")
+        print(f"  │ {G}[+] {W}বট স্ট্যাটাস    : {G}অনলাইন{RESET}")
+        print(f"  └────────────────────────────────────────────────────────")
+        print(f"\n{C} [🚀] পোলিং শুরু হচ্ছে... কোপানো শুরু করেন মামাহ!{RESET}\n")
+
+        # ইনফিনিটি পোলিং লজিক যা এরর আসলেও বট অফ হতে দিবে না
+        while True:
+            try:
+                # HBXUSER এর ভেতরের bot অবজেক্ট ব্যবহার করে পোলিং চালু
+                HBXUSER.bot.infinity_polling(timeout=10, long_polling_timeout=5)
+            except Exception as e:
+                # কোনো কারণে নেট ড্রপ বা এরর আসলে ৫ সেকেন্ড ওয়েট করে আবার রিস্টার্ট নিবে
+                time.sleep(5)
+
+    except ImportError:
+        print(f"\n{R} [!] ত্রুটি: HBXUSER.so ফাইলটি পাওয়া যায়নি!{RESET}")
+        print(f"{Y} [?] টিপস: নিশ্চিত করুন ফাইলটির নাম 'HBXUSER.so' আছে এবং এটি এই ফোল্ডারেই আছে।{RESET}")
+        sys.exit()
+    except AttributeError:
+        print(f"\n{R} [!] ত্রুটি: মডিউলের ভেতর 'bot' বা 'professional_logo' পাওয়া যায়নি।{RESET}")
+        sys.exit()
     except Exception as e:
-        print(f"❌ রান করার সময় একটি ইন্টারনাল সমস্যা হয়েছে: {e}")
+        print(f"\n{R} [!] মারাত্মক এরর: {e}{RESET}")
+        sys.exit()
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except KeyboardInterrupt:
+        print(f"\n\n{R} [!] ইউজার দ্বারা বন্ধ করা হয়েছে।{RESET}")
+        sys.exit()
