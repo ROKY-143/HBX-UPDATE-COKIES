@@ -2,6 +2,7 @@ import os
 import sys
 import time
 import platform
+import threading
 
 # কালার কোড
 R = "\033[1;31m" # Red
@@ -30,33 +31,32 @@ def main():
         sys.exit()
 
     try:
-        # HBXUSER.so ইমপোর্ট করা হচ্ছে
-        print(f"{C} [!] HBX আল্ট্রা ইঞ্জিন লোড হচ্ছে...{RESET}")
+        # USER.so ইমপোর্ট করা হচ্ছে
+        print(f"{C} [!] HBX ইঞ্জিন লোড হচ্ছে...{RESET}")
         time.sleep(1)
         
-        # সাইথন বিল্ড করা মডিউল ইমপোর্ট
-        import HBXUSER
+        import USER
         
-        # আপনার স্ক্রিপ্টের মেইন লোগো ফাংশন কল
-        HBXUSER.professional_logo()
+        # আপনার স্ক্রিপ্টের লোগো ফাংশন কল
+        USER.professional_logo()
         
         print(f"  │ {G}[+] {W}সিস্টেম চেক    : {G}পাসড (৬৪-বিট){RESET}")
         print(f"  │ {G}[+] {W}বট স্ট্যাটাস    : {G}অনলাইন{RESET}")
         print(f"  └────────────────────────────────────────────────────────")
         print(f"\n{C} [🚀] পোলিং শুরু হচ্ছে... কোপানো শুরু করেন মামাহ!{RESET}\n")
 
-        # ইনফিনিটি পোলিং লজিক যা এরর আসলেও বট অফ হতে দিবে না
+        # আপনার দেওয়া সেই ইনফিনিটি পোলিং লজিক
         while True:
             try:
-                # HBXUSER এর ভেতরের bot অবজেক্ট ব্যবহার করে পোলিং চালু
-                HBXUSER.bot.infinity_polling(timeout=10, long_polling_timeout=5)
+                # COKIESUSER এর ভেতরের bot অবজেক্ট ব্যবহার করে
+                USER.bot.infinity_polling(timeout=10, long_polling_timeout=5)
             except Exception as e:
-                # কোনো কারণে নেট ড্রপ বা এরর আসলে ৫ সেকেন্ড ওয়েট করে আবার রিস্টার্ট নিবে
+                # এরর আসলে ৫ সেকেন্ড ওয়েট করে আবার ট্রাই করবে
                 time.sleep(5)
 
     except ImportError:
-        print(f"\n{R} [!] ত্রুটি: HBXUSER.so ফাইলটি পাওয়া যায়নি!{RESET}")
-        print(f"{Y} [?] টিপস: নিশ্চিত করুন ফাইলটির নাম 'HBXUSER.so' আছে এবং এটি এই ফোল্ডারেই আছে।{RESET}")
+        print(f"\n{R} [!] ত্রুটি: USER.so ফাইলটি পাওয়া যায়নি!{RESET}")
+        print(f"{Y} [?] টিপস: ফাইলটি রিনেম করে 'USER.so' রাখুন।{RESET}")
         sys.exit()
     except AttributeError:
         print(f"\n{R} [!] ত্রুটি: মডিউলের ভেতর 'bot' বা 'professional_logo' পাওয়া যায়নি।{RESET}")
